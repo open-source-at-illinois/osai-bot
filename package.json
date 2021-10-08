@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "ts-node -- index.ts",
-    "deploy-slash": "ts-node -- deploy-commands.ts"
+    "deploy-slash": "ts-node -- deploy-commands.ts",
+    "start-full": "ts-node -- deploy-commands.ts && ts-node -- index.ts"
   },
   "repository": {
     "type": "git",
