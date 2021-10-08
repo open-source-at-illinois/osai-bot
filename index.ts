@@ -1,6 +1,14 @@
 require('dotenv').config()
 // Require the necessary discord.js classes
-const { Client, Intents } = require('discord.js');
+const fs = require('fs');
+const { Client, Intents, Collection } = require('discord.js');
+
+interface Command {
+  name: String;
+  aliases: String[];
+  id: Number;
+  executable: Function
+}
 
 // const commands = [{
 //   name: 'ping',
@@ -28,23 +36,37 @@ const { Client, Intents } = require('discord.js');
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 
 client.once('ready', () => {
-	console.log('Ready!');
+  console.log('Ready!');
 });
 
-client.on('interactionCreate', async interaction => {
-	if (!interaction.isCommand()) return;
+client.commands = new Collection();
 
-	const { commandName } = interaction;
+const commandFiles = fs.readdirSync('./src/commands').filter((file: any) => file.endsWith('.ts') || file.endsWith('.js'));
 
-	if (commandName === 'ping') {
-		await interaction.reply('Pong!');
-	} else if (commandName === 'server') {
-		await interaction.reply(`Server name: ${interaction.guild.name}\nTotal members: ${interaction.guild.memberCount}`);
-	} else if (commandName === 'user') {
-		await interaction.reply(`Your tag: ${interaction.user.tag}\nYour id: ${interaction.user.id}`);
-	}
+for (const file of commandFiles) {
+  const command = require(`./src/commands/${file}`);
+  // Set a new item in the Collection
+  // With the key as the command name and the value as the exported module
+  client.commands.set(command.data.name, command);
+}
+
+client.on('interactionCreate', async (interaction: any) => {
+  if (!interaction.isCommand()) return;
+
+  const command = client.commands.get(interaction.commandName);
+  console.log(interaction.commandName + ' was executed');
+  if (!command) return;
+
+  try {
+    // console.log('hmm');
+    await command.execute(interaction);
+    // console.log('hmm2');
+
+  } catch (error) {
+    console.error(error);
+    await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+  }
 });
-
 
 // Login to Discord with your client's token
 client.login(process.env.DISCORD_TOKEN);
