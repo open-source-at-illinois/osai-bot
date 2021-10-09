@@ -46,7 +46,7 @@ You will need a discord token for testing your code. We will provide one for the
 * `git status`
 * `git add <optional: filenames>`
 * `git commit -m "<commit message>"` : ensure commit message adheres to the respective guidlines. Ex: feat-132-CRM-revamp
-* `git push`
+* `git push origin main`
 * `git pull`
 * `git checkout -b "<branch_name>"`
 
