@@ -49,3 +49,5 @@ You will need a discord token for testing your code. We will provide one for the
 * `git push`
 * `git pull`
 * `git checkout -b "<branch_name>"`
+
+Workshop slides: [https://docs.google.com/presentation/d/10Y23KrYWuA4epP0soXQKhlwYsC9Ecp2Ta15KOmDXyBg/edit?usp=sharing](https://docs.google.com/presentation/d/10Y23KrYWuA4epP0soXQKhlwYsC9Ecp2Ta15KOmDXyBg/edit?usp=sharing)
