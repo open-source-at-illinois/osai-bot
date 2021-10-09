@@ -8,9 +8,9 @@ module.exports = {
         .addStringOption((option: any) => option.setName('text').setDescription('What the bot has to say')),
 
     async execute(interaction: CommandInteraction) {
-        // Get user input for number of sides
+        // Get user input for the text
         var text = interaction.options.getString('text');
-        // Dice should have 6 sides by default
+        // Text should be empty by default
         if(text === null) {
             text = "";
         }
