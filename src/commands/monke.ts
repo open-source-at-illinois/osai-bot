@@ -26,10 +26,10 @@ module.exports = {
 
         const monkeBigPPEmbed = new MessageEmbed()
             .setColor('#0099ff')
-            .setTitle('Meow')
+            .setTitle('mOnKe')
             .setImage("https://www.placemonkeys.com/500/500?random&" + makeid(5).toString())
             .setTimestamp()
-            .setFooter('Powered by thecatapi.com');
+            .setFooter('Powered by www.placemonkeys.com');
 
         await interaction.reply({embeds: [monkeBigPPEmbed]});
 
