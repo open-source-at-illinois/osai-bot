@@ -4,6 +4,17 @@ import fs = require('fs');
 const mongoose = require('mongoose');
 const { Client, Intents, Collection } = require('discord.js');
 
+// user schema
+const UserSchema = new mongoose.Schema({
+    netid: String,
+    verified: Boolean,
+    discordId: String,
+    discordName: String,
+    github: String,
+    token: String,
+    tokenExpiration: Date,
+});
+
 interface Command {
   name: String;
   aliases: String[];
