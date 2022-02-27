@@ -1,6 +1,7 @@
 require('dotenv').config()
 // Require the necessary discord.js classes
 import fs = require('fs');
+const mongoose = require('mongoose');
 const { Client, Intents, Collection } = require('discord.js');
 
 interface Command {
@@ -44,3 +45,7 @@ client.on('interactionCreate', async (interaction: any) => {
 
 // Login to Discord with your client's token
 client.login(process.env.DISCORD_TOKEN);
+
+mongoose.connect(`${process.env.MONGO_URI}`)
+  .then(() => console.log('Connected to MongoDB'));
+
