@@ -6,13 +6,13 @@ const { Client, Intents, Collection } = require('discord.js');
 
 // user schema
 const UserSchema = new mongoose.Schema({
-    netid: String,
-    verified: Boolean,
-    discordId: String,
-    discordName: String,
-    github: String,
-    token: String,
-    tokenExpiration: Date,
+  netid: String,
+  verified: Boolean,
+  discordId: String,
+  discordName: String,
+  github: String,
+  token: String,
+  tokenExpiration: Date,
 });
 
 interface Command {
@@ -57,6 +57,11 @@ client.on('interactionCreate', async (interaction: any) => {
 // Login to Discord with your client's token
 client.login(process.env.DISCORD_TOKEN);
 
-mongoose.connect(`${process.env.MONGO_URI}`)
-  .then(() => console.log('Connected to MongoDB'));
-
+// console.log(process.env.MONGO_URI);
+mongoose
+  .connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log("Database connected!"))
+  .catch(err => console.log(err));
