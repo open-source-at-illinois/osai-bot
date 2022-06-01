@@ -1,8 +1,5 @@
 import { CommandInteraction } from "discord.js";
 const { SlashCommandBuilder } = require('@discordjs/builders');
-
-import { evaluate } from "mathjs"
-
 const math = require('mathjs')
 
 module.exports = {
