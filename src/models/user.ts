@@ -13,18 +13,12 @@ const userSchema = new mongoose.Schema({
     },
     discordId: {
         type: String,
+        unique: true,
         required: true,
     },
     github: {
         type: String,
-        required: false,
-    },
-    token: {
-        type: String,
-        required: false,
-    },
-    tokenExpiration: {
-        type: Date,
+        unique: true,
         required: false,
     }
 });
