@@ -9,7 +9,7 @@ const ERROR_MSG = 'Could not verify at this time. Please try again later.'
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('verify')
+        .setName('netid')
         .setDescription('Does NetID Authorization for the server')
         .addStringOption((option: any) => option.setName('netid').setDescription('String of words seperated by a space')),
 
