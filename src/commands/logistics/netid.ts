@@ -60,7 +60,7 @@ module.exports = {
                 const msg = {
                     to: netid + '@illinois.edu',
                     from: 'noreply@opensourceatillinois.com',
-                    subject: 'Email Verification',
+                    subject: 'Email Verification: Open-Source @ Illinois',
                     html: getEmailString(verification.token),
                 }
                 sgMail.send(msg)
