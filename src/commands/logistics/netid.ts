@@ -3,7 +3,8 @@ import { CommandInteraction, ReactionUserManager } from "discord.js";
 import User from "../../models/user";
 import Verification from "../../models/verification";
 import getEmailString from "../../verification-text";
-const { SlashCommandBuilder } = require('@discordjs/builders');
+import { SlashCommandBuilder } from '@discordjs/builders';
+import got from "got/dist/source";
 
 const ERROR_MSG = 'Could not verify at this time. Please try again later.'
 
@@ -14,7 +15,6 @@ module.exports = {
         .addStringOption((option: any) => option.setName('netid').setDescription('String of words seperated by a space')),
 
     async execute(interaction: CommandInteraction) {
-        // Get user input for the string
         var netid = interaction.options.getString('netid')
             .trim()
             .split(' ')[0]
@@ -49,7 +49,8 @@ module.exports = {
             }
         });
 
-        const verification = createVerification(netid, interaction.user.id);
+        const verification = await createVerification(netid, interaction.user.id);
+        
         verification.save((err) => {
             if (err) {
                 interaction.reply(ERROR_MSG)
@@ -76,10 +77,8 @@ module.exports = {
     },
 };
 
-const createVerification = (netid: string, discordId: string) => {
-    // Generate a random 6 letter token
-    // const token = cryptoRandomString({ length: 6, type: 'distinguishable' });
-    const token = '123456';
+const createVerification = async (netid: string, discordId: string) => {
+    const token = await getRandomToken();
     // Set expiration to 30 minutes from now
     const verification = new Verification({
         netid: netid,
@@ -88,4 +87,14 @@ const createVerification = (netid: string, discordId: string) => {
         tokenExpiration: Date.now() + 30 * 60 * 1000
     });
     return verification;
+}
+
+const getRandomToken = async () => {
+    const response = await got.get('https://www.random.org/strings/?num=1&len=5&digits=on&upperalpha=on&unique=on&format=plain&rnd=new')
+        .catch((err: any) => console.log(err));
+    if (response) {
+        return response.body.trim();
+    } else {
+        return Math.random().toString(36).slice(2, 7);
+    }
 }
