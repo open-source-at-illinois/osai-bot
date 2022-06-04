@@ -15,21 +15,34 @@ module.exports = {
         .addStringOption((option: any) => option.setName('netid').setDescription('String of words seperated by a space')),
 
     async execute(interaction: CommandInteraction) {
-        var netid = interaction.options.getString('netid')
-            .trim()
-            .split(' ')[0]
-            .toLocaleLowerCase();
+        let netid = interaction.options.getString('netid');
+
+        if (!netid) {
+            interaction.reply('Usage: `/netid <netid>`');
+            return;
+        }
+
+        netid = netid.trim().split(' ')[0].toLocaleLowerCase();
+
+        if (netid.length <= 1) {
+            interaction.reply('The given netID is invalid. Usage: `/netid <netid>`');
+            return;
+        }
 
         // Check if netid is already verified
-        User.findOne({ netid: netid }, (err, user) => {
-            if (err) {
-                interaction.reply(ERROR_MSG)
-            } else if (user) {
-                if (user.verified) {
-                    interaction.reply('This NetID is already verified! Changed your discord account? Contact an exec member.');
-                }
-            }
+        let user = User.findOne({ netid: netid }).catch(err => {
+            console.log(err);
+            interaction.reply(ERROR_MSG)
         })
+        if (user) {
+            if (user.verified) {
+                interaction.reply('You are already verified!');
+                return;
+            }
+        } else {
+            user = new User({ discordId: interaction.user.id, netid: null, verified: false });
+            await user.save();
+        }
 
         // Timeout the command for each NetID to prevent spam
         const activeTokens = await Verification.find({ netid: netid, tokenExpiration: { $gt: Date.now() } }).exec();
@@ -50,30 +63,26 @@ module.exports = {
         });
 
         const verification = await createVerification(netid, interaction.user.id);
-        
-        verification.save((err) => {
-            if (err) {
-                interaction.reply(ERROR_MSG)
-            } else {
-                const sgMail = require('@sendgrid/mail')
-                sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
-                const msg = {
-                    to: netid + '@illinois.edu',
-                    from: 'noreply@opensourceatillinois.com',
-                    subject: 'Email Verification: Open-Source @ Illinois',
-                    html: getEmailString(verification.token),
-                }
-                sgMail.send(msg)
-                    .then(() => {
-                        interaction.reply('You should receive a verification code shortly. Use /verify to complete the process.');
-                    })
-                    .catch((error) => {
-                        console.error(error)
-                        interaction.reply(ERROR_MSG);
-                    });
-            }
+        await verification.save().catch(err => {
+            console.log(err);
+            interaction.reply(ERROR_MSG)
         });
+
+        const sgMail = require('@sendgrid/mail')
+        sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+
+        await sgMail.send({
+            to: netid + '@illinois.edu',
+            from: 'noreply@opensourceatillinois.com',
+            subject: 'Email Verification: Open-Source @ Illinois',
+            html: getEmailString(verification.token),
+        }).catch((error) => {
+            console.error(error)
+            interaction.reply(ERROR_MSG);
+        });
+
+        interaction.reply('You should receive a verification code shortly. Use /verify to complete the process.');
     },
 };
 
