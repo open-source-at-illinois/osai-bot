@@ -4,7 +4,7 @@ const getEmailString = (token: string) => `
 Here is your verification code for Open-Source @ Illinois: 
 
 <br>
-<strong>ABCDFEF</strong>
+<strong>${token}</strong>
 <br>
 
 <h4> Next Steps </h4>
