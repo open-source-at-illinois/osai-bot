@@ -27,13 +27,15 @@
   },
   "dependencies": {
     "@discordjs/builders": "^0.6.0",
-    "@discordjs/rest": "^0.1.0-canary.0",
+    "@discordjs/rest": "^0.4.1",
     "@sendgrid/mail": "^7.6.1",
-    "discord-api-types": "^0.23.1",
-    "discord.js": "^13.1.0",
+    "@types/mongoose": "^5.11.97",
+    "crypto-random-string": "^5.0.0",
+    "discord-api-types": "^0.33.2",
+    "discord.js": "^13.7.0",
     "dotenv": "^10.0.0",
     "got": "^11.8.2",
     "mathjs": "^9.5.0",
-    "mongoose": "^6.2.3"
+    "mongoose": "^6.3.5"
   }
 }
