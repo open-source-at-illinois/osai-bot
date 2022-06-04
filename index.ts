@@ -1,28 +1,9 @@
 require('dotenv').config()
-// Require the necessary discord.js classes
-import fs = require('fs');
+const fs = require('fs');
 const mongoose = require('mongoose');
 const { Client, Intents, Collection } = require('discord.js');
+import type { CommandInteraction } from "discord.js";
 
-// user schema
-const UserSchema = new mongoose.Schema({
-  netid: String,
-  verified: Boolean,
-  discordId: String,
-  discordName: String,
-  github: String,
-  token: String,
-  tokenExpiration: Date,
-});
-
-interface Command {
-  name: String;
-  aliases: String[];
-  id: Number;
-  executable: Function
-}
-
-// Create a new client instance
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 
 client.once('ready', () => {
@@ -31,37 +12,33 @@ client.once('ready', () => {
 
 client.commands = new Collection();
 
-const commandFiles = fs.readdirSync('./src/commands').filter((file: any) => file.endsWith('.ts') || file.endsWith('.js'));
+// TODO recursively get all directories in the commands folder
+const commandDirs = ['fun', 'logistics', 'util'];
 
-for (const file of commandFiles) {
-  const command = require(`./src/commands/${file}`);
-  client.commands.set(command.data.name, command);
+for (const dir of commandDirs) {
+  const commandFiles = fs.readdirSync(`./src/commands/${dir}`).filter((file: any) => file.endsWith('.ts') || file.endsWith('.js'));
+  for (const file of commandFiles) {
+    const command = require(`./src/commands/${dir}/${file}`);
+    client.commands.set(command.data.name, command);
+  }
 }
 
-client.on('interactionCreate', async (interaction: any) => {
+
+client.on('interactionCreate', async (interaction: CommandInteraction) => {
   if (!interaction.isCommand()) return;
 
   const command = client.commands.get(interaction.commandName);
-  console.log(interaction.commandName + ' was executed');
-  // Return if command doesn't exist
   if (!command) return;
-  // Execute interaction
-  try {
-    await command.execute(interaction);
-  } catch (error) {
+
+  await command.execute(interaction).catch(async error => {
     console.error(error);
     await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
-  }
+  });
 });
 
-// Login to Discord with your client's token
 client.login(process.env.DISCORD_TOKEN);
 
-// console.log(process.env.MONGO_URI);
 mongoose
-  .connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log("Database connected!"))
-  .catch(err => console.log(err));
+  .connect(process.env.MONGO_URI)
+  .then(() => console.log("Connected to MongoDB"))
+  .catch((err: any) => console.log(err));
