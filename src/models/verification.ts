@@ -10,7 +10,7 @@ const verificationSchema = new mongoose.Schema({
         required: true,
     },
     tokenExpiration: {
-        type: Date,
+        type: Number,
         required: true,
     },
     verified: {
@@ -20,7 +20,7 @@ const verificationSchema = new mongoose.Schema({
     },
     netid: {
         type: String,
-        required: false,
+        required: true,
     },
 });
 
