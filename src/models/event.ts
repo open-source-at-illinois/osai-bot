@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+import mongoose = require('mongoose')
 
 const eventSchema = new mongoose.Schema({
     name: {
@@ -26,5 +26,14 @@ const eventSchema = new mongoose.Schema({
         type: Number,
         required: true,
         default: 1,
+    },
+    active: {
+        type: Boolean,
+        required: true,
+        default: true,
     }
 })
+
+const Event = mongoose.model('Event', eventSchema)
+
+export default Event;
