@@ -1,9 +1,6 @@
 import { BaseCommandInteraction, MessageEmbed } from "discord.js";
-
-const { SlashCommandBuilder } = require('@discordjs/builders');
-
-const got = require('got');
-
+import { SlashCommandBuilder } from '@discordjs/builders';
+import got from "got/dist/source";
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -23,7 +20,7 @@ module.exports = {
             .setTimestamp()
             .setFooter('Powered by thecatapi.com');
 
-        await interaction.reply({embeds: [catEmbed]});
+        await interaction.reply({ embeds: [catEmbed] });
         // await interaction.reply('Meow! ' + image.url);
     },
 };
