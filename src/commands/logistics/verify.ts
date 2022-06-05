@@ -47,7 +47,7 @@ module.exports = {
         }
 
         if (verification.discordId !== interaction.user.id) {
-            interaction.reply('That token is not for you, try again.');
+            interaction.reply('That is not a valid token, try again. Hint: Tokens are case-sensitive and have no spaces');
             return;
         }
 
