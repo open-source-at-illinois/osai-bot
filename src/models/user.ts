@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+import mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
     netid: {
