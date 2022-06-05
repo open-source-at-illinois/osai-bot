@@ -51,12 +51,17 @@ module.exports = {
             return;
         }
 
+        const UIUC_ROLE_ID = '983068543543312444'
+
+        await interaction.guild.members.cache
+            .get(interaction.user.id)
+            .roles.add(UIUC_ROLE_ID);
+
         user.verified = true;
         user.netid = verification.netid;
         user.save();
 
-        Verification.remove({ token }).exec();
-
+        Verification.deleteOne({ token }).exec();
         interaction.reply('Congratulations, You have been verified!');
     }
 }
