@@ -31,10 +31,14 @@ module.exports = {
         }
 
         // Check if netid is already verified
-        let user = User.findOne({ netid: netid }).catch(err => {
+        let user = await User.findOne({
+            $or: [{ netid: netid },
+            { discordId: interaction.user.id }]
+        }).catch(err => {
             console.log(err);
             interaction.reply(ERROR_MSG)
         })
+
         if (user) {
             if (user.verified) {
                 interaction.reply('You are already verified!');
