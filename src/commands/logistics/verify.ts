@@ -8,16 +8,10 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('verify')
         .setDescription('Verifies your Illinois NetID')
-        .addStringOption((option) => option.setName('token').setDescription('Token received in email. case-sensitive, no spaces')),
+        .addStringOption((option) => option.setName('token').setDescription('Token received in email. case-sensitive, no spaces').setRequired(true)),
 
     async execute(interaction: CommandInteraction) {
-        let token = interaction.options.getString('token')
-        if (!token) {
-            interaction.reply('Usage: `/verify <token>`');
-            return;
-        }
-
-        token = token.trim().split(' ')[0];
+        let token = interaction.options.getString('token').trim().split(' ')[0];
 
         if (token.length != VERIFY_TOKEN_LENGTH) {
             interaction.reply('The given token is invalid. Usage: `/verify <token>`');

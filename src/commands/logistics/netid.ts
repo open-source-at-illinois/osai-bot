@@ -14,15 +14,10 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('netid')
         .setDescription('Does NetID Authorization for the server')
-        .addStringOption((option) => option.setName('netid').setDescription('String of words seperated by a space')),
+        .addStringOption((option) => option.setName('netid').setDescription('String of words seperated by a space').setRequired(true)),
 
     async execute(interaction: CommandInteraction) {
         let netid = interaction.options.getString('netid');
-
-        if (!netid) {
-            interaction.reply('Usage: `/netid <netid>`');
-            return;
-        }
 
         netid = netid.trim().split(' ')[0].toLocaleLowerCase();
 
