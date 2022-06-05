@@ -1,0 +1,4 @@
+
+const IsExec = (user) : boolean => {
+    
+}
