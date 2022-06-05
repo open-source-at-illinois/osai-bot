@@ -5,6 +5,7 @@ import Verification from "../../models/verification";
 import getEmailString from "../../verification-text";
 import { SlashCommandBuilder } from '@discordjs/builders';
 import got from "got/dist/source";
+import { VERIFY_TOKEN_EXPIRATION, VERIFY_TOKEN_LENGTH } from "../../constants";
 
 const ERROR_MSG = 'Could not verify at this time. Please try again later.'
 
@@ -44,8 +45,13 @@ module.exports = {
             await user.save();
         }
 
-        // Timeout the command for each NetID to prevent spam
-        const activeTokens = await Verification.find({ netid: netid, tokenExpiration: { $gt: Date.now() } }).exec();
+        // Timeout the command for each NetID and each user to prevent spam
+        const activeTokens = await Verification.find({
+            $or: [
+                { netid: netid, tokenExpiration: { $gt: Date.now() } },
+                { discordId: interaction.user.id, tokenExpiration: { $gt: Date.now() } }]
+        }).exec();
+
         if (activeTokens.length > 0) {
             interaction.reply('You have already requested a verification token. Please wait 30 minutes before requesting another.');
             return;
@@ -93,17 +99,17 @@ const createVerification = async (netid: string, discordId: string) => {
         netid: netid,
         discordId: discordId,
         token: token,
-        tokenExpiration: Date.now() + 30 * 60 * 1000
+        tokenExpiration: Date.now() + VERIFY_TOKEN_EXPIRATION,
     });
     return verification;
 }
 
 const getRandomToken = async () => {
-    const response = await got.get('https://www.random.org/strings/?num=1&len=5&digits=on&upperalpha=on&unique=on&format=plain&rnd=new')
+    const response = await got.get(`https://www.random.org/strings/?num=1&len=${VERIFY_TOKEN_LENGTH}&digits=on&upperalpha=on&unique=on&format=plain&rnd=new`)
         .catch((err: any) => console.log(err));
     if (response) {
         return response.body.trim();
     } else {
-        return Math.random().toString(36).slice(2, 7);
+        return Math.random().toString(36).slice(2, 2 + VERIFY_TOKEN_LENGTH);
     }
 }
