@@ -2,6 +2,7 @@ import { CommandInteraction } from "discord.js";
 import { SlashCommandBuilder } from '@discordjs/builders';
 import User from "../../models/user";
 import Verification from "../../models/verification";
+import { VERIFY_TOKEN_LENGTH } from "../../constants";
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -18,7 +19,7 @@ module.exports = {
 
         token = token.trim().split(' ')[0];
 
-        if (token.length != 5) {
+        if (token.length != VERIFY_TOKEN_LENGTH) {
             interaction.reply('The given token is invalid. Usage: `/verify <token>`');
             return;
         }
