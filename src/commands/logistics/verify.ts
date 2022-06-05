@@ -2,16 +2,16 @@ import { CommandInteraction } from "discord.js";
 import { SlashCommandBuilder } from '@discordjs/builders';
 import User from "../../models/user";
 import Verification from "../../models/verification";
-import { VERIFY_TOKEN_LENGTH } from "../../constants";
+import { UIUC_ROLE_ID, VERIFY_TOKEN_LENGTH } from "../../constants";
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('verify')
         .setDescription('Verifies your Illinois NetID')
-        .addStringOption((option: any) => option.setName('token').setDescription('Token received in email. case-sensitive, no spaces')),
+        .addStringOption((option) => option.setName('token').setDescription('Token received in email. case-sensitive, no spaces')),
 
     async execute(interaction: CommandInteraction) {
-        var token = interaction.options.getString('token')
+        let token = interaction.options.getString('token')
         if (!token) {
             interaction.reply('Usage: `/verify <token>`');
             return;
@@ -47,16 +47,19 @@ module.exports = {
         }
 
         if (verification.discordId !== interaction.user.id) {
-            interaction.reply('That token is not for you, try again.');
+            interaction.reply('That is not a valid token, try again. Hint: Tokens are case-sensitive and have no spaces');
             return;
         }
+
+        await interaction.guild.members.cache
+            .get(interaction.user.id)
+            .roles.add(UIUC_ROLE_ID);
 
         user.verified = true;
         user.netid = verification.netid;
         user.save();
 
-        Verification.remove({ token }).exec();
-
+        Verification.deleteOne({ token }).exec();
         interaction.reply('Congratulations, You have been verified!');
     }
 }

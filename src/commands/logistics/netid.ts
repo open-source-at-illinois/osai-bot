@@ -1,4 +1,4 @@
-import { CommandInteraction, ReactionUserManager } from "discord.js";
+import { CommandInteraction } from "discord.js";
 // import cryptoRandomString from 'crypto-random-string';
 import User from "../../models/user";
 import Verification from "../../models/verification";
@@ -6,6 +6,7 @@ import getEmailString from "../../verification-text";
 import { SlashCommandBuilder } from '@discordjs/builders';
 import got from "got/dist/source";
 import { VERIFY_TOKEN_EXPIRATION, VERIFY_TOKEN_LENGTH } from "../../constants";
+import sgMail = require('@sendgrid/mail');
 
 const ERROR_MSG = 'Could not verify at this time. Please try again later.'
 
@@ -13,7 +14,7 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('netid')
         .setDescription('Does NetID Authorization for the server')
-        .addStringOption((option: any) => option.setName('netid').setDescription('String of words seperated by a space')),
+        .addStringOption((option) => option.setName('netid').setDescription('String of words seperated by a space')),
 
     async execute(interaction: CommandInteraction) {
         let netid = interaction.options.getString('netid');
@@ -31,10 +32,14 @@ module.exports = {
         }
 
         // Check if netid is already verified
-        let user = User.findOne({ netid: netid }).catch(err => {
+        let user = await User.findOne({
+            $or: [{ netid: netid },
+            { discordId: interaction.user.id }]
+        }).catch(err => {
             console.log(err);
             interaction.reply(ERROR_MSG)
         })
+
         if (user) {
             if (user.verified) {
                 interaction.reply('You are already verified!');
@@ -75,7 +80,6 @@ module.exports = {
             interaction.reply(ERROR_MSG)
         });
 
-        const sgMail = require('@sendgrid/mail')
         sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
         await sgMail.send({
@@ -106,7 +110,7 @@ const createVerification = async (netid: string, discordId: string) => {
 
 const getRandomToken = async () => {
     const response = await got.get(`https://www.random.org/strings/?num=1&len=${VERIFY_TOKEN_LENGTH}&digits=on&upperalpha=on&unique=on&format=plain&rnd=new`)
-        .catch((err: any) => console.log(err));
+        .catch((err) => console.log(err));
     if (response) {
         return response.body.trim();
     } else {

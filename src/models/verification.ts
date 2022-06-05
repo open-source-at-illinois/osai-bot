@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+import mongoose = require('mongoose');
 
 const verificationSchema = new mongoose.Schema({
     discordId: {
@@ -12,11 +12,6 @@ const verificationSchema = new mongoose.Schema({
     tokenExpiration: {
         type: Number,
         required: true,
-    },
-    verified: {
-        type: Boolean,
-        required: true,
-        default: false,
     },
     netid: {
         type: String,

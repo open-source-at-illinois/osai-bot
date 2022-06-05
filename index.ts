@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 require('dotenv').config()
 const fs = require('fs');
 const mongoose = require('mongoose');
@@ -16,7 +17,7 @@ client.commands = new Collection();
 const commandDirs = ['fun', 'logistics', 'util'];
 
 for (const dir of commandDirs) {
-  const commandFiles = fs.readdirSync(`./src/commands/${dir}`).filter((file: any) => file.endsWith('.ts') || file.endsWith('.js'));
+  const commandFiles = fs.readdirSync(`./src/commands/${dir}`).filter((file: string) => file.endsWith('.ts') || file.endsWith('.js'));
   for (const file of commandFiles) {
     const command = require(`./src/commands/${dir}/${file}`);
     client.commands.set(command.data.name, command);
@@ -41,4 +42,4 @@ client.login(process.env.DISCORD_TOKEN);
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => console.log("Connected to MongoDB"))
-  .catch((err: any) => console.log(err));
+  .catch((err) => console.log(err));

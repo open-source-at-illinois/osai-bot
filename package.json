@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "ts-node -- index.ts",
+    "lint": "eslint . --ext .ts",
     "deploy-slash": "ts-node -- deploy-commands.ts",
     "start-full": "ts-node -- deploy-commands.ts && ts-node -- index.ts"
   },
@@ -21,6 +22,9 @@
   "homepage": "https://github.com/open-source-at-illinois/osai-bot#readme",
   "devDependencies": {
     "@types/node": "^16.10.2",
+    "@typescript-eslint/eslint-plugin": "^5.27.0",
+    "@typescript-eslint/parser": "^5.27.0",
+    "eslint": "^8.17.0",
     "ts-node": "^10.2.1",
     "tslib": "^2.3.1",
     "typescript": "^4.4.3"
