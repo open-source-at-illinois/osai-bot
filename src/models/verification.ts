@@ -13,11 +13,6 @@ const verificationSchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
-    verified: {
-        type: Boolean,
-        required: true,
-        default: false,
-    },
     netid: {
         type: String,
         required: true,
