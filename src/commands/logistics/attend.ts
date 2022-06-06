@@ -21,6 +21,11 @@ module.exports = {
             return;
         }
 
+        if (!event.active) {
+            interaction.reply({ content: `This event is no longer active.`, ephemeral: true });
+            return;
+        }
+
         let user = await User.findOne({ discordId: interaction.user.id })
             .catch(err => {
                 console.log(err);
@@ -33,7 +38,7 @@ module.exports = {
                 return;
             }
         } else {
-            user = new User({ discordId: interaction.user.id, netid: null, verified: false });
+            user = new User({ discordId: interaction.user.id, verified: false });
             await user.save();
         }
 
