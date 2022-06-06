@@ -1,6 +1,8 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction } from "discord.js";
+import { CommandInteraction, GuildMember } from "discord.js";
+import { NOT_AUTHORIZED_MESSAGE } from "../../constants";
 import Event from "../../models/event";
+import { isExec } from "../../utils";
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -10,6 +12,11 @@ module.exports = {
 
     async execute(interaction: CommandInteraction) {
         const code = interaction.options.getString('code').trim();
+
+        if (!isExec(interaction.member as GuildMember)) {
+            interaction.reply(NOT_AUTHORIZED_MESSAGE);
+            return;
+        }
 
         // Find an event with the given code
         const event = await Event.findOne({ code }).exec();
