@@ -11,10 +11,10 @@ module.exports = {
         .addStringOption((option) => option.setName('token').setDescription('Token received in email. case-sensitive, no spaces').setRequired(true)),
 
     async execute(interaction: CommandInteraction) {
-        let token = interaction.options.getString('token').trim().split(' ')[0];
+        const token = interaction.options.getString('token').trim().split(' ')[0];
 
         if (token.length != VERIFY_TOKEN_LENGTH) {
-            interaction.reply('The given token is invalid. Usage: `/verify <token>`');
+            interaction.reply({ content: 'The given token is invalid. Usage: `/verify <token>`', ephemeral: true });
             return;
         }
 
@@ -25,23 +25,23 @@ module.exports = {
         }
 
         if (user.verified) {
-            interaction.reply('You are already verified!');
+            interaction.reply({ content: 'You are already verified!', ephemeral: true });
             return;
         }
 
         const verification = await Verification.findOne({ token: token }).exec();
         if (!verification) {
-            interaction.reply('That is not a valid token, try again. Hint: Tokens are case-sensitive and have no spaces');
+            interaction.reply({ content: 'That is not a valid token, try again. Hint: Tokens are case-sensitive and have no spaces', ephemeral: true });
             return;
         }
 
         if (verification.tokenExpiration < Date.now()) {
-            interaction.reply('That token has expired. Get another token using `/netid <your netid>`');
+            interaction.reply({ content: 'That token has expired. Get another token using `/netid <your netid>`', ephemeral: true });
             return;
         }
 
         if (verification.discordId !== interaction.user.id) {
-            interaction.reply('That is not a valid token, try again. Hint: Tokens are case-sensitive and have no spaces');
+            interaction.reply({ content: 'That is not a valid token, try again. Hint: Tokens are case-sensitive and have no spaces', ephemeral: true });
             return;
         }
 
@@ -54,6 +54,6 @@ module.exports = {
         user.save();
 
         Verification.deleteOne({ token }).exec();
-        interaction.reply('Congratulations, You have been verified!');
+        interaction.reply({ content: 'Congratulations, You have been verified!', ephemeral: true });
     }
 }

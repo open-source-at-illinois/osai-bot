@@ -17,7 +17,7 @@ module.exports = {
         const event = await Event.findOne({ code });
 
         if (!event) {
-            interaction.reply(`Could not find an event with code ${code}`);
+            interaction.reply({ content: `Could not find an event with code ${code}`, ephemeral: true });
             return;
         }
 
@@ -29,7 +29,7 @@ module.exports = {
 
         if (user) {
             if (event.attendees.includes(user._id)) {
-                interaction.reply('You are already attending this event!');
+                interaction.reply({ content: 'You are already attending this event!', ephemeral: true });
                 return;
             }
         } else {
