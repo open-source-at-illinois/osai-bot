@@ -45,7 +45,7 @@ module.exports = {
                 return;
             }
         } else {
-            user = new User({ discordId: interaction.user.id, netid: null, verified: false });
+            user = new User({ discordId: interaction.user.id, verified: false });
             await user.save();
         }
 

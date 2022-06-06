@@ -20,7 +20,7 @@ module.exports = {
 
         let user = await User.findOne({ discordId: interaction.user.id }).exec();
         if (!user) {
-            user = new User({ discordId: interaction.user.id, netid: null, verified: false });
+            user = new User({ discordId: interaction.user.id, verified: false });
             await user.save();
         }
 
