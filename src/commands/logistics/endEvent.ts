@@ -2,10 +2,9 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
 import Event from "../../models/event";
 
-
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('endEvent')
+        .setName('endevent')
         .setDescription('Ends an event by marking it as inactive')
         .addStringOption((option) => option.setName('code').setDescription('Event code').setRequired(true)),
 
