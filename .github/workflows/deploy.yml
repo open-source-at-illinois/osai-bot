@@ -1,0 +1,27 @@
+name: Deploy to VPS
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Executing remote commands
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          USERNAME: ${{ secrets.USERNAME }}
+          PORT: ${{ secrets.PORT }}
+          KEY: ${{ secrets.SSHKEY }}
+          script: |
+            cd /osai-bot/osai-bot
+            export NVM_DIR=~/.nvm
+            source ~/.nvm/nvm.sh
+            git pull origin main
+            yarn
+            pm2 stop osai-bot
+            pm2 del osai-bot
+            pm2 start yarn --name osai-bot -- start-full
