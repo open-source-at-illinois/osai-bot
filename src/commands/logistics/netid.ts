@@ -14,39 +14,38 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('netid')
         .setDescription('Does NetID Authorization for the server')
-        .addStringOption((option) => option.setName('netid').setDescription('String of words seperated by a space')),
+        .addStringOption((option) => option.setName('netid').setDescription('String of words seperated by a space').setRequired(true)),
 
     async execute(interaction: CommandInteraction) {
         let netid = interaction.options.getString('netid');
 
-        if (!netid) {
-            interaction.reply('Usage: `/netid <netid>`');
-            return;
-        }
-
         netid = netid.trim().split(' ')[0].toLocaleLowerCase();
 
         if (netid.length <= 1) {
-            interaction.reply('The given netID is invalid. Usage: `/netid <netid>`');
+            interaction.reply({ content: 'The given netID is invalid. Usage: `/netid <netid>`', ephemeral: true });
             return;
         }
 
         // Check if netid is already verified
-        let user = await User.findOne({
-            $or: [{ netid: netid },
-            { discordId: interaction.user.id }]
-        }).catch(err => {
-            console.log(err);
-            interaction.reply(ERROR_MSG)
-        })
+        const netIDOwner = await User.findOne({ netid }).exec();
+        if (netIDOwner) {
+            interaction.reply({ content: 'That NetID is already verified! Changed your discord account? Contact an exec member.', ephemeral: true });
+            return;
+        }
+
+        let user = await User.findOne({ discordId: interaction.user.id })
+            .catch(err => {
+                console.log(err);
+                interaction.reply(ERROR_MSG)
+            })
 
         if (user) {
             if (user.verified) {
-                interaction.reply('You are already verified!');
+                interaction.reply({ content: 'You are already verified!', ephemeral: true });
                 return;
             }
         } else {
-            user = new User({ discordId: interaction.user.id, netid: null, verified: false });
+            user = new User({ discordId: interaction.user.id, verified: false });
             await user.save();
         }
 
@@ -58,20 +57,9 @@ module.exports = {
         }).exec();
 
         if (activeTokens.length > 0) {
-            interaction.reply('You have already requested a verification token. Please wait 30 minutes before requesting another.');
+            interaction.reply({ content: 'You have already requested a verification token. Please wait 30 minutes before requesting another.', ephemeral: true });
             return;
         }
-
-        // Check if user is already verified
-        User.findOne({ discordId: interaction.user.id }, (err, user) => {
-            if (err) {
-                interaction.reply(ERROR_MSG)
-            } else if (user) {
-                if (user.verified) {
-                    interaction.reply('You are already verified!');
-                }
-            }
-        });
 
         const verification = await createVerification(netid, interaction.user.id);
 
@@ -92,7 +80,7 @@ module.exports = {
             interaction.reply(ERROR_MSG);
         });
 
-        interaction.reply('You should receive a verification code shortly. Use /verify to complete the process.');
+        interaction.reply({ content: 'You should receive a verification code shortly. Use /verify to complete the process.', ephemeral: true });
     },
 };
 
