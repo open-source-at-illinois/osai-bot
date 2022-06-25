@@ -4,8 +4,8 @@ export interface EventType {
   name: string;
   code: string;
   description: string;
-  when: string;
-  where: string;
+  when?: string;
+  where?: string;
   points: number;
   active: boolean;
   attendees: [mongoose.Types.ObjectId];
