@@ -1,7 +1,7 @@
 import mongoose = require("mongoose");
 
 export interface UserType {
-  netid: string;
+  netid?: string;
   verified: boolean;
   discordId: string;
   github?: string;
@@ -13,6 +13,7 @@ const userSchema = new mongoose.Schema<UserType>({
     type: String,
     required: false,
     unique: true,
+    sparse: true,
   },
   verified: {
     type: Boolean,
@@ -28,6 +29,7 @@ const userSchema = new mongoose.Schema<UserType>({
     type: String,
     unique: true,
     required: false,
+    sparse: true,
   },
   points: {
     type: Number,
