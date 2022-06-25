@@ -1,7 +1,5 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { notEqual } from "assert";
 import { CommandInteraction, GuildMember, MessageEmbed } from "discord.js";
-import { norm } from "mathjs";
 import Event, { EventType } from "../../models/event";
 import { isExec } from "../../utils";
 
