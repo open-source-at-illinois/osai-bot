@@ -31,7 +31,9 @@ client.on("interactionCreate", async (interaction: CommandInteraction) => {
 
   const command = client.commands.get(interaction.commandName);
   if (!command) return;
-
+  console.log(
+    `${interaction.user.username}#${interaction.user.discriminator} ran /${interaction.commandName}`
+  );
   await command.execute(interaction).catch(async (error) => {
     console.error(error);
     await interaction.reply({
