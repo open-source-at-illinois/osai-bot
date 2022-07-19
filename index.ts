@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 require("dotenv").config();
 const fs = require("fs");
-const mongoose = require("mongoose");
+import mongoose = require("mongoose");
 const { Client, Intents, Collection } = require("discord.js");
 import type { CommandInteraction } from "discord.js";
 
@@ -45,7 +45,13 @@ client.on("interactionCreate", async (interaction: CommandInteraction) => {
 
 client.login(process.env.DISCORD_TOKEN);
 
+const mongoConnectOptions: mongoose.ConnectOptions = {
+  keepAlive: true,
+  keepAliveInitialDelay: 300000,
+  heartbeatFrequencyMS: 10000,
+};
+
 mongoose
-  .connect(process.env.MONGO_URI)
+  .connect(process.env.MONGO_URI, mongoConnectOptions)
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.log(err));
