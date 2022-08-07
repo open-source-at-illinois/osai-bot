@@ -37,6 +37,8 @@ module.exports = {
     ),
 
   async execute(interaction: CommandInteraction) {
+    const DEFAULT_EVENT_POINTS = 10;
+
     if (!isExec(interaction.member as GuildMember)) {
       interaction.reply(NOT_AUTHORIZED_MESSAGE);
       return;
@@ -54,7 +56,7 @@ module.exports = {
       description: interaction.options.getString("description"),
       when: interaction.options.getString("when"),
       where: interaction.options.getString("where"),
-      points: interaction.options.getInteger("points") || 1,
+      points: interaction.options.getInteger("points") || DEFAULT_EVENT_POINTS,
     });
     await event.save();
 
