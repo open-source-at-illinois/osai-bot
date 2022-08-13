@@ -11,6 +11,13 @@ client.once("ready", () => {
   console.log("OSAI-Bot is Ready!");
 });
 
+export const inDev = process.env.NODE_ENV === "development";
+
+if (inDev) {
+  console.log("[canary] Running in development mode");
+} else {
+  console.log("[sudo] Running in production mode");
+}
 client.commands = new Collection();
 
 // TODO recursively get all directories in the commands folder
@@ -31,9 +38,11 @@ client.on("interactionCreate", async (interaction: CommandInteraction) => {
 
   const command = client.commands.get(interaction.commandName);
   if (!command) return;
-  console.log(
-    `${interaction.user.username}#${interaction.user.discriminator} ran /${interaction.commandName}`
-  );
+  if (inDev) {
+    console.log(
+      `${interaction.user.username}#${interaction.user.discriminator} ran /${interaction.commandName}`
+    );
+  }
   await command.execute(interaction).catch(async (error) => {
     console.error(error);
     await interaction.reply({
