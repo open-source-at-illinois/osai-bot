@@ -1,5 +1,6 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, GuildMember, MessageEmbed } from "discord.js";
+import moment = require("moment-timezone");
 import { NOT_AUTHORIZED_MESSAGE } from "../../constants";
 import Event from "../../models/event";
 import { isExec } from "../../utils";
@@ -38,11 +39,24 @@ module.exports = {
 
   async execute(interaction: CommandInteraction) {
     const DEFAULT_EVENT_POINTS = 10;
+    const DATE_FORMAT = "MMM DD hh:mm A";
 
     if (!isExec(interaction.member as GuildMember)) {
       interaction.reply(NOT_AUTHORIZED_MESSAGE);
       return;
     }
+
+    const when = interaction.options.getString("when");
+    moment().tz("America/Chicago").format();
+    const mom = moment(when, DATE_FORMAT, true);
+
+    if (!mom.isValid()) {
+      interaction.reply(
+        "Invalid date format. Try something like `Sep 22 07:00 PM` (Hint: The 0 in 07:32 is required)"
+      );
+      return;
+    }
+
     const code = interaction.options.getString("code");
     const codeTaken = await Event.findOne({ code });
     if (codeTaken) {
