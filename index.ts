@@ -38,11 +38,13 @@ client.on("interactionCreate", async (interaction: CommandInteraction) => {
 
   const command = client.commands.get(interaction.commandName);
   if (!command) return;
-  if (inDev) {
-    console.log(
-      `${interaction.user.username}#${interaction.user.discriminator} ran /${interaction.commandName}`
-    );
-  }
+
+  // Logging
+  const content = `${interaction.user.username}#${interaction.user.discriminator} ran /${interaction.commandName}`;
+  console.log(content);
+  const logChannel = client.channels.cache.get(process.env.LOG_CHANNEL_ID);
+  logChannel.send(content);
+
   await command.execute(interaction).catch(async (error) => {
     console.error(error);
     await interaction.reply({
