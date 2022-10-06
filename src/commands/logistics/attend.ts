@@ -20,7 +20,7 @@ module.exports = {
 
     if (!event) {
       interaction.reply({
-        content: `Could not find an event with code ${code}`,
+        content: `Could not find an event with that code`,
         ephemeral: true,
       });
       return;
