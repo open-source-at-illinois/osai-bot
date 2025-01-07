@@ -1,6 +1,9 @@
 name: Deploy to VPS
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
 
 jobs:
   build:
@@ -8,20 +11,24 @@ jobs:
 
     steps:
       - uses: actions/checkout@v1
+      - name: Copy repository contents via scp
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          source: "."
+          target: "~/osai-bot"
 
       - name: Executing remote commands
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
-          USERNAME: ${{ secrets.USERNAME }}
-          PORT: ${{ secrets.PORT }}
-          KEY: ${{ secrets.SSHKEY }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
           script: |
-            cd /osai-bot/osai-bot
-            export NVM_DIR=~/.nvm
-            source ~/.nvm/nvm.sh
-            git pull origin main
-            yarn
-            pm2 stop osai-bot
-            pm2 del osai-bot
-            pm2 start yarn --name osai-bot -- start-full
+            cd ~/osai-bot
+            touch .env
+            echo -e "${{secrets.ENV}}\n" >> .env
+            echo -e "SENDGRID_API_KEY=${{secrets.SENDGRID_API_KEY}}" >> .env
+            pm2 restart osai-bot
